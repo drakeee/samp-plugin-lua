@@ -27,6 +27,7 @@ public:
 	void StartLua(void);
 	void DisableFunctions(lua_State *L);
 	void RegisterFunctions(lua_State *L);
+	void RegisterMacros(lua_State *L);
 	void CallInitExit(const char* scriptInit);
 	std::string GetResourceName() { return resourceName; }
 	lua_State *GetVirtualMachine(void) { return lua_VM; }
