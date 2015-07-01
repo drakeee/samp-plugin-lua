@@ -1,0 +1,10 @@
+EXPORTS
+	Supports
+	ProcessTick
+	Load
+	Unload
+	AmxLoad
+	AmxUnload
+	OnPublicCall
+	OnPlayerCommandText
+	OnRconCommand
