@@ -1,5 +1,6 @@
 #include "CLuaFunctions.h"
 #include "CGlobalContainer.h"
+#include "CTimer.h"
 
 LUA_FUNCTION DisableFunction(lua_State *L)
 {
@@ -29,6 +30,7 @@ LUA_FUNCTION addEventHandler(lua_State *L)
 	ArgReader argReader(L);
 	argReader.ReadString(luaFunction);
 	argReader.ReadFunction(reference);
+	argReader.ReadFunctionComplete();
 
 	CContainer::LuaReference::Add(L, luaFunction, reference);
 	return 0;
@@ -42,10 +44,45 @@ LUA_FUNCTION addCommandHandler(lua_State *L)
 	ArgReader argReader(L);
 	argReader.ReadString(luaFunction);
 	argReader.ReadFunction(reference);
+	argReader.ReadFunctionComplete();
 
 	//CUtility::printf("OPCT: %s", luaFunction.c_str());
 	CContainer::LuaReference::Add(L, luaFunction, reference);
 	return 0;
+}
+
+LUA_FUNCTION setTimer(lua_State *L)
+{
+	int interval;
+	bool repeat;
+	int reference;
+	CLuaArguments *luaArgs = new CLuaArguments();
+	CUtility::printf("VM(1): %d", lua_gettop(L));
+
+	ArgReader argReader(L);
+	argReader.ReadNumber(interval);
+	argReader.ReadBool(repeat);
+	argReader.ReadFunction(reference);
+	argReader.ReadArguments(*luaArgs);
+	argReader.ReadFunctionComplete();
+
+	int timerid = CTimer::CreateTimer(interval, repeat, L, reference, luaArgs);
+	lua_pushnumber(L, timerid);
+
+	return 1;
+}
+
+LUA_FUNCTION killTimer(lua_State *L)
+{
+	int timerid;
+
+	ArgReader argReader(L);
+	argReader.ReadNumber(timerid);
+
+	bool success = CTimer::DeleteTimer(timerid, L);
+	lua_pushboolean(L, success);
+
+	return 1;
 }
 
 LUA_FUNCTION sendClientMessage(lua_State *L)

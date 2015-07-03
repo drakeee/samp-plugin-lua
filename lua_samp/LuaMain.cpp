@@ -1,14 +1,14 @@
 #include "LuaMain.h"
 #include "CGlobalContainer.h"
+#include "CTimer.h"
 
 typedef void(*logprintf_t)(char* format, ...);
 
-logprintf_t logprintf;
 extern void *pAMXFunctions;
 
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports()
 {
-	return sampgdk::Supports() | SUPPORTS_VERSION | SUPPORTS_AMX_NATIVES | SUPPORTS_PROCESS_TICK;
+	return sampgdk::Supports() | SUPPORTS_PROCESS_TICK;
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData)
@@ -85,23 +85,8 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 	sampgdk::Unload();
 }
 
-AMX_NATIVE_INFO PluginNatives[] =
-{
-	{ 0, 0 }
-};
-
-PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX *amx)
-{
-	return amx_Register(amx, PluginNatives, -1);
-}
-
-
-PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX *amx)
-{
-	return AMX_ERR_NONE;
-}
-
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
+	CTimer::ProcessTick();
 	sampgdk::ProcessTick();
 }

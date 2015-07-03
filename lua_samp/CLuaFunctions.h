@@ -3,6 +3,7 @@
 
 #include <string>
 #include "CArgumentReader.h"
+#include "CLuaArguments.h"
 extern "C"
 {
 #include "Lua_351/lua.h"
@@ -20,6 +21,8 @@ namespace CLuaFunctions
 	int print(lua_State *L);
 	int addEventHandler(lua_State *L);
 	int addCommandHandler(lua_State *L);
+	int setTimer(lua_State *L);
+	int killTimer(lua_State *L);
 
 	//Functions - Util
 	int sendClientMessage(lua_State *L);

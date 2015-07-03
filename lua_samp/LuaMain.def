@@ -1,10 +1,8 @@
 EXPORTS
 	Supports
-	ProcessTick
 	Load
 	Unload
-	AmxLoad
-	AmxUnload
+	ProcessTick
 	OnPublicCall
 	OnPlayerCommandText
 	OnRconCommand

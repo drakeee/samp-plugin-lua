@@ -4,6 +4,8 @@ ArgReader::ArgReader(lua_State *L)
 {
 	lua_VM = L;
 	argIndex = 1;
+	pendingFunctionRefOut = NULL;
+	pendingFunctionRef = -1;
 }
 
 ArgReader::~ArgReader()
@@ -105,18 +107,49 @@ void ArgReader::ReadBool(bool& boolVariable, bool defaultValue)
 	argIndex++;
 }
 
+#include "CUtility.h"
+void ArgReader::ReadArguments(CLuaArguments &luaArgumentsVariable)
+{
+	//CUtility::printf("ReadArguments called: %d - %d!", lua_type(lua_VM, 4), lua_gettop(lua_VM));
+	while (lua_type(lua_VM, argIndex) != LUA_TNONE)
+	{
+		CLuaArgument* argPointer = new CLuaArgument(lua_VM, argIndex);
+		luaArgumentsVariable.Add(argPointer);
+		
+		argIndex++;
+	}
+}
+
 void ArgReader::ReadFunction(int& intVariable)
 {
 	int argType = lua_type(lua_VM, argIndex);
 	if (argType == LUA_TFUNCTION)
 	{
-		intVariable = luaL_ref(lua_VM, LUA_REGISTRYINDEX);
+		//lua_pushvalue(lua_VM, -1);
+		//intVariable = luaL_ref(lua_VM, LUA_REGISTRYINDEX);
+		pendingFunctionRefOut = &intVariable; //thanks to MTA
+		pendingFunctionRef = argIndex;
 		argIndex++;
 
 		return;
 	}
 
 	argIndex++;
+}
+
+void ArgReader::ReadFunctionComplete()
+{
+	if (pendingFunctionRef == -1)
+	{
+		CUtility::printf("CArgumentReader::ReadFunctionComplete called before CArgumentReader::ReadFunction.");
+		return;
+	}
+
+	lua_settop(lua_VM, pendingFunctionRef);
+	int ref = luaL_ref(lua_VM, LUA_REGISTRYINDEX);
+
+	*pendingFunctionRefOut = ref;
+	pendingFunctionRef = -1;
 }
 
 void ArgReader::ReadString(std::string& stringVariable, const char* defaultValue)

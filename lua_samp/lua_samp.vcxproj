@@ -90,10 +90,13 @@
   <ItemGroup>
     <ClCompile Include="CArgumentReader.cpp" />
     <ClCompile Include="CGlobalContainer.cpp" />
+    <ClCompile Include="CLuaArgument.cpp" />
+    <ClCompile Include="CLuaArguments.cpp" />
     <ClCompile Include="CLuaFunctions.cpp" />
     <ClCompile Include="CLuaManager.cpp" />
     <ClCompile Include="CResourceManager.cpp" />
     <ClCompile Include="CSampCallbacks.cpp" />
+    <ClCompile Include="CTimer.cpp" />
     <ClCompile Include="CUtility.cpp" />
     <ClCompile Include="Include\Lua_351\lapi.c" />
     <ClCompile Include="Include\Lua_351\lauxlib.c" />
@@ -137,10 +140,13 @@
   <ItemGroup>
     <ClInclude Include="CArgumentReader.h" />
     <ClInclude Include="CGlobalContainer.h" />
+    <ClInclude Include="CLuaArgument.h" />
+    <ClInclude Include="CLuaArguments.h" />
     <ClInclude Include="CLuaFunctions.h" />
     <ClInclude Include="CLuaManager.h" />
     <ClInclude Include="CResourceManager.h" />
     <ClInclude Include="CSampCallbacks.h" />
+    <ClInclude Include="CTimer.h" />
     <ClInclude Include="CUtility.h" />
     <ClInclude Include="LuaMain.h" />
   </ItemGroup>

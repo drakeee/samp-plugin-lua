@@ -1,5 +1,6 @@
 #include "CLuaManager.h"
 #include "CGlobalContainer.h"
+#include "CTimer.h"
 
 CLuaManager::CLuaManager(std::string rName, std::string scriptFile)
 {
@@ -13,6 +14,7 @@ CLuaManager::~CLuaManager()
 {
 	//CUtility::printf("CLuaManager destrcutor!");
 	CallInitExit("onScriptExit");
+	CTimer::DeleteLuaTimers(lua_VM);
 	//CContainer::LuaManager::Delete(lua_VM);
 }
 
@@ -452,6 +454,8 @@ void CLuaManager::RegisterFunctions(lua_State *L)
 	lua_register(L, "print", CLuaFunctions::print);
 	lua_register(L, "addEventHandler", CLuaFunctions::addEventHandler);
 	lua_register(L, "addCommandHandler", CLuaFunctions::addCommandHandler);
+	lua_register(L, "setTimer", CLuaFunctions::setTimer);
+	lua_register(L, "killTimer", CLuaFunctions::killTimer);
 
 	//Functions - Util
 	lua_register(L, "sendClientMessage", CLuaFunctions::sendClientMessage);

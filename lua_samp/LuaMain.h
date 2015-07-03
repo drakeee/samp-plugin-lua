@@ -6,6 +6,6 @@
 #include "sampgdk/sampgdk.h"
 #include "CUtility.h"
 
-#define PLUGIN_VERSION "v0.1 (Alpha)"
+#define PLUGIN_VERSION "v0.1.2 (Alpha)"
 
 #endif
