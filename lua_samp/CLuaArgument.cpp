@@ -14,7 +14,6 @@ CLuaArgument::CLuaArgument(lua_State *L, int argIndex)
 		case LUA_TNUMBER:
 		{
 			argNumber = lua_tonumber(L, argIndex);
-			CUtility::printf("N: %d - %f", argIndex, argNumber);
 			break;
 		}
 		case LUA_TSTRING:

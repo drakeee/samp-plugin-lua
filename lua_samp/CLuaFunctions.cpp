@@ -57,7 +57,6 @@ LUA_FUNCTION setTimer(lua_State *L)
 	bool repeat;
 	int reference;
 	CLuaArguments *luaArgs = new CLuaArguments();
-	CUtility::printf("VM(1): %d", lua_gettop(L));
 
 	ArgReader argReader(L);
 	argReader.ReadNumber(interval);
