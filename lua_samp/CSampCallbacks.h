@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include "SDK/plugin.h"
+#include "CCore.h"
 #include "CUtility.h"
-#include "CGlobalContainer.h"
 #include "CResourceManager.h"
 
 #endif

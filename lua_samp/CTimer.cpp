@@ -3,46 +3,68 @@
 
 namespace CTimer
 {
-	std::map<lua_State *, std::vector<TimerStruct *>> timerContainer;
+	std::map<lua_State *, std::map<int, TimerStruct *>> timerContainer;
 	bool eraseCalled = true;
 
 	int CreateTimer(int interval, bool repeat, lua_State *L, int reference, CLuaArguments *luaArg)
 	{
 		TimerStruct *p = new TimerStruct(interval, repeat, L, reference, luaArg);
-		p->nextCall = (GetTickCount() + interval);
-		timerContainer[L].push_back(p);
+		p->nextCall = (GetTickCountEx() + interval);
 
-		return (timerContainer[L].size() - 1);
+		int timerid = GetFreeIndex(L);
+		timerContainer[L][timerid] = p;
+
+		return timerid;
+	}
+
+	int GetFreeIndex(lua_State *L)
+	{
+		unsigned int i = 0; // or whatever your smallest admissable key value is
+
+		for (auto it = timerContainer[L].cbegin(), end = timerContainer[L].cend(); it != end && i == it->first; ++it, ++i){}
+
+		return i;
 	}
 
 	bool DeleteTimer(int timerid, lua_State *L)
 	{
-		if (timerid >= (int)timerContainer[L].size())
+		if (timerContainer.find(L) == timerContainer.end())
 		{
 			return false;
 		}
 
-		timerContainer[L].erase(timerContainer[L].begin() + timerid);
+		if (timerContainer[L].find(timerid) == timerContainer[L].end())
+		{
+			return false;
+		}
+
+		auto it = timerContainer[L].find(timerid);
+		timerContainer[L].erase(it);
+
 		return true;
 	}
 
 	void DeleteLuaTimers(lua_State *L)
 	{
 		auto it = timerContainer.find(L);
-		timerContainer.erase(it);
+		if (it != timerContainer.end())
+		{
+			timerContainer.erase(it);
+		}
 	}
 
 	void ExecuteTimer(lua_State *L)
 	{
-		std::vector<TimerStruct *> vec = timerContainer[L];
-		for (auto it = vec.begin(); it != vec.end();)
+		auto mapTimer = timerContainer[L];
+		for (auto mapIT = mapTimer.begin(); mapIT != mapTimer.end();)
 		{
-			if ((*it)->nextCall < GetTickCount())
+			TimerStruct * timer = timerContainer[L][mapIT->first];
+			if (timer->nextCall < GetTickCountEx())
 			{
-				lua_State *L = (*it)->lua_VM;
-				lua_rawgeti((*it)->lua_VM, LUA_REGISTRYINDEX, (*it)->reference);
+				lua_State *L = timer->lua_VM;
+				lua_rawgeti(timer->lua_VM, LUA_REGISTRYINDEX, timer->reference);
 
-				auto *p = (*it)->luaArguments;
+				auto *p = timer->luaArguments;
 				auto tempVector = p->Get();
 				for (auto arguments = tempVector.begin(); arguments != tempVector.end(); ++arguments)
 				{
@@ -50,42 +72,42 @@ namespace CTimer
 					{
 					case LUA_TBOOLEAN:
 					{
-										 lua_pushboolean((*it)->lua_VM, (*arguments)->GetBoolean());
-										 break;
+										lua_pushboolean(timer->lua_VM, (*arguments)->GetBoolean());
+										break;
 					}
 					case LUA_TNUMBER:
 					{
-										lua_pushnumber((*it)->lua_VM, (*arguments)->GetNumber());
+										lua_pushnumber(timer->lua_VM, (*arguments)->GetNumber());
 										break;
 					}
 					case LUA_TSTRING:
 					{
-										lua_pushstring((*it)->lua_VM, (*arguments)->GetString().c_str());
+										lua_pushstring(timer->lua_VM, (*arguments)->GetString().c_str());
 										break;
 					}
 					}
 				}
 
 				//CUtility::printf("Size: %d", tempVector.size());
-				if (lua_pcall((*it)->lua_VM, tempVector.size(), 0, 0) != 0)
+				if (lua_pcall(timer->lua_VM, tempVector.size(), 0, 0) != 0)
 				{
-					CUtility::printf("setTimer error: %s", lua_tostring((*it)->lua_VM, -1));
-					lua_pop((*it)->lua_VM, 1);
+					CUtility::printf("setTimer error: %s", lua_tostring(timer->lua_VM, -1));
+					lua_pop(timer->lua_VM, 1);
 				}
 
-				if ((*it)->repeat)
+				if (timer->repeat)
 				{
-					(*it)->nextCall = (GetTickCount() + (*it)->interval);
+					timer->nextCall = (GetTickCountEx() + timer->interval);
 				}
 				else
 				{
 					eraseCalled = true;
-					it = timerContainer[L].erase(it);
+					mapIT = timerContainer[L].erase(mapIT);
 				}
 			}
 
 			if (!eraseCalled)
-				++it;
+				++mapIT;
 
 			eraseCalled = false;
 		}

@@ -2,6 +2,14 @@
 #include <algorithm>
 #include <sstream>
 
+PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
+{
+	s_Core->LoadModules();
+	s_Core->LoadResources();
+
+	return true;
+}
+
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerCommandText(int playerid, const char *cmdtext)
 {
 	int playerID = (int)playerid;
@@ -13,8 +21,8 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerCommandText(int playerid, const char *cmd
 	getline(ss, commandName, ' '); //get the commandname apart from the args
 	commandName.insert(0, "OPCT_");
 
-	std::map<std::string, std::vector<ReferenceStruct>> temp = CContainer::LuaReference::GetContainer();
-	std::vector<ReferenceStruct> a = temp[commandName];
+	std::map<std::string, std::vector<ReferenceStruct>> *temp = s_Core->GetReferenceContainer();
+	std::vector<ReferenceStruct> a = (*temp)[commandName];
 	for (std::vector<ReferenceStruct>::iterator it = a.begin(); it != a.end(); ++it)
 	{
 		std::string tok;
@@ -57,17 +65,17 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX *amx, const char *name, cell *pa
 	std::string callbackName(name);
 	callbackName[0] = std::tolower(callbackName[0]);
 
-	std::map<std::string, std::vector<ReferenceStruct>> temp = CContainer::LuaReference::GetContainer();
-	std::vector<ReferenceStruct> a = temp[callbackName];
+	std::map<std::string, std::vector<ReferenceStruct>> *temp = s_Core->GetReferenceContainer();
+	std::vector<ReferenceStruct> a = (*temp)[callbackName];
 	for (std::vector<ReferenceStruct>::iterator it = a.begin(); it != a.end(); ++it)
 	{
 		lua_State *L = it->lua_VM;
 		lua_rawgeti(L, LUA_REGISTRYINDEX, it->reference);
 
-		std::vector<int> argsType = CContainer::CallbackArgsType::callbackArgumentsType[callbackName];
+		std::vector<int> *argsType = s_Core->GetCallbackArguments(callbackName); //CContainer::CallbackArgsType::callbackArgumentsType[callbackName];
 
 		int numArg = 1;
-		for (std::vector<int>::iterator argType = argsType.begin(); argType != argsType.end(); ++argType)
+		for (std::vector<int>::iterator argType = (*argsType).begin(); argType != (*argsType).end(); ++argType)
 		{
 			switch (*argType)
 			{
@@ -123,20 +131,32 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnRconCommand(const char* cmd)
 			return true;
 		}
 
-		bool IsResourceRunning = CContainer::Resource::Check(res.c_str());
+		//Check if resource running under the passed name
+		bool IsResourceRunning = s_Core->IsResourceRunning(res.c_str());
+
+		//If it is not running
 		if (!IsResourceRunning)
 		{
+			//Create resource instance
 			CResourceManager* resource = new CResourceManager(res.c_str());
+
+			//Try to load resource scripts
 			resource->LoadResource();
 
+			//Check if resource has valid scripts
 			if (resource->IsResourceValid())
 			{
+				//Give some info to the user
 				CUtility::printf("'%s' resource is successfully started.", resource->GetResourceName().c_str());
+				
+				//Start the resource
 				resource->StartResource();
-				CContainer::Resource::Add(resource);
+
+				//Register the resource pointer in the core object
+				s_Core->RegisterResource(resource);
 			}
 		}
-		else
+		else //Otherwise print that load is unsuccessfull
 		{
 			CUtility::printf("Unable to load '%s' resource! (resource is running)", res.c_str());
 		}
@@ -152,14 +172,19 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnRconCommand(const char* cmd)
 			return true;
 		}
 
-		bool IsResourceRunning = CContainer::Resource::Check(res.c_str());
+		//Check if resource running under the passed name
+		bool IsResourceRunning = s_Core->IsResourceRunning(res.c_str());
+
+		//If it is running
 		if (IsResourceRunning)
 		{
-			CResourceManager *resource = CContainer::Resource::Get(res.c_str());
-			//CUtility::printf("IsRunning: %s", resource->GetResourceName().c_str());
+			//Get the pointer by the resource name
+			CResourceManager *resource = s_Core->GetResourceByName(res.c_str());
+
+			//Stop the resource
 			resource->StopResource();
 		}
-		else
+		else //If it is not running then inform the player about it
 		{
 			CUtility::printf("Resource '%s' is not running!", res.c_str());
 		}
@@ -167,6 +192,5 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnRconCommand(const char* cmd)
 		return true;
 	}
 
-	//CUtility::printf("Parancs: %s", cmd);
 	return true;
 }

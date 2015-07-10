@@ -4343,7 +4343,7 @@ inline bool SetObjectsDefaultCameraCol(bool disable) {
 #define EditPlayerObject sampgdk_EditPlayerObject
 
 #undef  SelectObject
-#define SelectObject sampgdk_SelectObject
+#define SelectObjectEx sampgdk_SelectObject
 
 #undef  CancelEdit
 #define CancelEdit sampgdk_CancelEdit
@@ -5833,7 +5833,7 @@ inline bool gpci(int playerid, char * buffer, int size) {
 #define GameTextForPlayer sampgdk_GameTextForPlayer
 
 #undef  GetTickCount
-#define GetTickCount sampgdk_GetTickCount
+#define GetTickCountEx sampgdk_GetTickCount
 
 #undef  GetMaxPlayers
 #define GetMaxPlayers sampgdk_GetMaxPlayers
@@ -6016,10 +6016,10 @@ inline bool gpci(int playerid, char * buffer, int size) {
 #define NetStats_GetIpPort sampgdk_NetStats_GetIpPort
 
 #undef  CreateMenu
-#define CreateMenu sampgdk_CreateMenu
+#define CreateMenuEx sampgdk_CreateMenu
 
 #undef  DestroyMenu
-#define DestroyMenu sampgdk_DestroyMenu
+#define DestroyMenuEx sampgdk_DestroyMenu
 
 #undef  AddMenuItem
 #define AddMenuItem sampgdk_AddMenuItem
@@ -6175,10 +6175,10 @@ inline bool gpci(int playerid, char * buffer, int size) {
 #define ShowPlayerDialog sampgdk_ShowPlayerDialog
 
 #undef  SetTimer
-#define SetTimer sampgdk_SetTimer
+#define SetTimerEx sampgdk_SetTimer
 
 #undef  KillTimer
-#define KillTimer sampgdk_KillTimer
+#define KillTimerEx sampgdk_KillTimer
 
 #undef  gpci
 #define gpci sampgdk_gpci

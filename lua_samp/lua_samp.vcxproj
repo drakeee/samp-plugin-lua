@@ -52,7 +52,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LUA_SAMP2_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LUA_SAMP2_EXPORTS;_CRT_SECURE_NO_WARNINGS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -70,7 +70,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LUA_SAMP2_EXPORTS;_CRT_SECURE_NO_WARNINGS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LUA_SAMP2_EXPORTS;_CRT_SECURE_NO_WARNINGS=1;SAMPGDK_WINDOWS=1;SAMPGDK_AMALGAMATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -89,13 +89,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CArgumentReader.cpp" />
-    <ClCompile Include="CGlobalContainer.cpp" />
+    <ClCompile Include="CCore.cpp" />
     <ClCompile Include="CLuaArgument.cpp" />
     <ClCompile Include="CLuaArguments.cpp" />
     <ClCompile Include="CLuaFunctions.cpp" />
     <ClCompile Include="CLuaManager.cpp" />
+    <ClCompile Include="CLuaModule.cpp" />
     <ClCompile Include="CResourceManager.cpp" />
     <ClCompile Include="CSampCallbacks.cpp" />
+    <ClCompile Include="CServerConfig.cpp" />
     <ClCompile Include="CTimer.cpp" />
     <ClCompile Include="CUtility.cpp" />
     <ClCompile Include="Include\Lua_351\lapi.c" />
@@ -127,7 +129,6 @@
     <ClCompile Include="Include\Lua_351\ltable.c" />
     <ClCompile Include="Include\Lua_351\ltablib.c" />
     <ClCompile Include="Include\Lua_351\ltm.c" />
-    <ClCompile Include="Include\Lua_351\luac.c" />
     <ClCompile Include="Include\Lua_351\lundump.c" />
     <ClCompile Include="Include\Lua_351\lutf8lib.c" />
     <ClCompile Include="Include\Lua_351\lvm.c" />
@@ -139,15 +140,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CArgumentReader.h" />
-    <ClInclude Include="CGlobalContainer.h" />
+    <ClInclude Include="CCore.h" />
     <ClInclude Include="CLuaArgument.h" />
     <ClInclude Include="CLuaArguments.h" />
     <ClInclude Include="CLuaFunctions.h" />
     <ClInclude Include="CLuaManager.h" />
+    <ClInclude Include="CLuaModule.h" />
     <ClInclude Include="CResourceManager.h" />
     <ClInclude Include="CSampCallbacks.h" />
+    <ClInclude Include="CServerConfig.h" />
     <ClInclude Include="CTimer.h" />
     <ClInclude Include="CUtility.h" />
+    <ClInclude Include="ILuaModuleManager.h" />
     <ClInclude Include="LuaMain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

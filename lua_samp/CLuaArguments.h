@@ -9,11 +9,10 @@ class CLuaArguments
 public:
 	CLuaArguments();
 	~CLuaArguments();
-	void Add(CLuaArgument *);
-	std::vector<CLuaArgument *> Get(void) { return argumentsContainer; }
+	void							Add(CLuaArgument *);
+	std::vector<CLuaArgument *>		Get(void) { return argumentsContainer; }
 private:
-	std::vector<CLuaArgument *> argumentsContainer;
-	int teszt;
+	std::vector<CLuaArgument *>		argumentsContainer;
 };
 
 #endif

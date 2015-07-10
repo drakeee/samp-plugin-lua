@@ -17,6 +17,10 @@ namespace CLuaFunctions
 	//Functions - Disable Function
 	int DisableFunction(lua_State *L);
 
+	//Functions - Call function from another LuaVM
+	int isResourceRunning(lua_State *L);
+	int call(lua_State *L);
+
 	//Functions - Util
 	int print(lua_State *L);
 	int addEventHandler(lua_State *L);

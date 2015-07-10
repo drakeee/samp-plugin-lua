@@ -1,9 +1,9 @@
 #include "CArgumentReader.h"
 
-ArgReader::ArgReader(lua_State *L)
+ArgReader::ArgReader(lua_State *L, int stackStart)
 {
 	lua_VM = L;
-	argIndex = 1;
+	argIndex = stackStart;
 	pendingFunctionRefOut = NULL;
 	pendingFunctionRef = -1;
 }
@@ -11,6 +11,35 @@ ArgReader::ArgReader(lua_State *L)
 ArgReader::~ArgReader()
 {
 
+}
+
+void ArgReader::ReadLuaNumber(lua_Number& numberVariable, int defaultValue)
+{
+	//check if argument is number or string
+	int argType = lua_type(lua_VM, argIndex);
+	if (argType == LUA_TNUMBER || argType == LUA_TSTRING)
+	{
+		//read if it is
+		numberVariable = lua_tonumber(lua_VM, argIndex);
+		argIndex++;
+
+		return;
+	}
+	else
+	{
+		//if it has default value
+		if (defaultValue != NULL)
+		{
+			//then just fill it with them
+			numberVariable = defaultValue;
+			argIndex++;
+
+			return;
+		}
+	}
+
+	numberVariable = 0;
+	argIndex++;
 }
 
 void ArgReader::ReadNumber(int& intVariable, int defaultValue)

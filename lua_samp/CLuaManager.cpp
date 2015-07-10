@@ -1,12 +1,14 @@
 #include "CLuaManager.h"
-#include "CGlobalContainer.h"
+#include "CCore.h"
 #include "CTimer.h"
 
-CLuaManager::CLuaManager(std::string rName, std::string scriptFile)
+CLuaManager::CLuaManager(std::string rName)
 {
 	resourceName = rName;
-	fileName = scriptFile;
+	//fileName = scriptFile;
 	lua_VM = NULL;
+
+	InitVM();
 	//luaReferences.clear();
 }
 
@@ -23,34 +25,38 @@ void CLuaManager::InitVM()
 	lua_VM = luaL_newstate();
 	luaL_openlibs(lua_VM);
 
-	std::string fileWithPath("lua_scripts/" + resourceName + "/" + fileName);
-	//CUtility::printf("Utilize: %d", lua_VM);
-	int s = luaL_loadfile(lua_VM, fileWithPath.c_str());
-
 	DisableFunctions(lua_VM);
+	RegisterPreScript(lua_VM);
 	RegisterFunctions(lua_VM);
 	RegisterMacros(lua_VM);
-
-	CContainer::LuaManager::Add(lua_VM, this);
+	RegisterModuleFunctions(lua_VM);
 }
 
 void CLuaManager::StartLua(void)
 {
-	int s = lua_pcall(lua_VM, 0, LUA_MULTRET, 0);
-
-	if (s != 0)
+	for (auto it = fileContainer.begin(); it != fileContainer.end(); ++it)
 	{
-		CUtility::printf("-- %s", lua_tostring(lua_VM, -1));
-		lua_pop(lua_VM, 1);
+		std::string fileWithPath(LUA_RESOURCES_FOLDER + resourceName + "/" + (*it));
+		luaL_loadfile(lua_VM, fileWithPath.c_str());
+
+		int s = lua_pcall(lua_VM, 0, LUA_MULTRET, 0);
+
+		if (s != 0)
+		{
+			CUtility::printf("-- %s", lua_tostring(lua_VM, -1));
+			lua_pop(lua_VM, 1);
+		}
 	}
 
 	CallInitExit("onScriptInit");
+
+	s_Core->RegisterLuaManager(lua_VM, this);
 }
 
 void CLuaManager::CallInitExit(const char* scriptInit)
 {
-	std::map<std::string, std::vector<ReferenceStruct>> temp = CContainer::LuaReference::GetContainer();
-	std::vector<ReferenceStruct> a = temp[scriptInit];
+	std::map<std::string, std::vector<ReferenceStruct>> *temp = s_Core->GetReferenceContainer();
+	std::vector<ReferenceStruct> a = (*temp)[scriptInit];
 	for (std::vector<ReferenceStruct>::iterator it = a.begin(); it != a.end(); ++it)
 	{
 		if (it->lua_VM == lua_VM)
@@ -75,6 +81,33 @@ void CLuaManager::DisableFunctions(lua_State *L)
 	lua_register(L, "require", CLuaFunctions::DisableFunction);
 	lua_register(L, "setfenv", CLuaFunctions::DisableFunction);
 	lua_register(L, "getfenv", CLuaFunctions::DisableFunction);
+}
+
+void CLuaManager::RegisterPreScript(lua_State *L)
+{
+	const char preScript[] = "" \
+		"local callMT = {}\n" \
+		"function callMT : __index(k)\n" \
+		"	k = tostring(k)\n" \
+		"	self[k] = function(resTable, ...)\n" \
+		"		return call(self.res, k, ...)\n" \
+		"	end\n" \
+		"	return self[k]\n" \
+		"end\n" \
+		"local exportMT = {}\n" \
+		"function exportMT : __index(k)\n" \
+		"	if isResourceRunning(k) then\n" \
+		"		k = tostring(k)\n" \
+		"		return setmetatable({ res = k }, callMT)\n" \
+		"	else\n" \
+		"		print('export: ' ..k .. ' resource is not running!', 1)\n" \
+		"		return nil\n" \
+		"	end\n" \
+		"end\n" \
+		"export = setmetatable({}, exportMT)\n";
+
+	luaL_loadstring(L, preScript);
+	lua_pcall(L, 0, LUA_MULTRET, 0);
 }
 
 void CLuaManager::RegisterMacros(lua_State *L)
@@ -449,8 +482,20 @@ void CLuaManager::RegisterMacros(lua_State *L)
 	lua_setglobal(L, "VEHICLE_MODEL_INFO_REAR_BUMPER_Z");
 }
 
+void CLuaManager::RegisterModuleFunctions(lua_State *L)
+{
+	auto *tempContainer = s_Core->GetModuleContainer();
+	for (auto it = (*tempContainer).begin(); it != (*tempContainer).end(); ++it)
+	{
+		(*it)->_RegisterFunctions(L);
+	}
+}
+
 void CLuaManager::RegisterFunctions(lua_State *L)
 {
+	lua_register(L, "call", CLuaFunctions::call);
+	lua_register(L, "isResourceRunning", CLuaFunctions::isResourceRunning);
+
 	lua_register(L, "print", CLuaFunctions::print);
 	lua_register(L, "addEventHandler", CLuaFunctions::addEventHandler);
 	lua_register(L, "addCommandHandler", CLuaFunctions::addCommandHandler);

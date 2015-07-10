@@ -1,5 +1,5 @@
 #include "CLuaFunctions.h"
-#include "CGlobalContainer.h"
+#include "CCore.h"
 #include "CTimer.h"
 
 LUA_FUNCTION DisableFunction(lua_State *L)
@@ -8,6 +8,176 @@ LUA_FUNCTION DisableFunction(lua_State *L)
 	lua_pushboolean(L, false);
 
 	return 1;
+}
+
+void stackdump(lua_State* l)
+{
+	int argn = lua_gettop(l);
+
+	printf("total in stack %d\n", argn);
+
+	//stacks starts from 1 and end at argn
+	for (int i = 1; i <= argn; i++)
+	{
+		//get type at stack index
+		int t = lua_type(l, i);
+
+		switch (t)
+		{
+		case LUA_TSTRING:
+		{
+							printf("%d. - string: '%s'\n", i, lua_tostring(l, i));
+							break;
+		}
+		case LUA_TBOOLEAN:
+		{
+							 printf("%d. - boolean %s\n", i, (lua_toboolean(l, i) ? "true" : "false"));
+							 break;
+		}
+		case LUA_TNUMBER:
+		{
+							printf("%d. - number: %g\n", i, lua_tonumber(l, i));
+							break;
+		}
+		default:
+		{
+				   printf("%d. - %s\n", i, lua_typename(l, t));
+				   break;
+		}
+		}
+	}
+	printf("\n");
+}
+
+LUA_FUNCTION isResourceRunning(lua_State *L)
+{
+	std::string resourceName;
+
+	ArgReader argReader(L);
+	argReader.ReadString(resourceName);
+
+	//get resource by name
+	CResourceManager* p = s_Core->GetResourceByName(resourceName.c_str());
+	if (p == NULL)
+	{
+		lua_pushboolean(L, false);
+	}
+	else
+	{
+		lua_pushboolean(L, true);
+	}
+
+	return 1;
+}
+
+LUA_FUNCTION call(lua_State *L)
+{
+	int argn = lua_gettop(L);
+	if (argn < 2)
+		return CUtility::printf("call function got less, than 2 argument."), 0;
+
+	std::string resourceName;
+	std::string functionName;
+
+	ArgReader argReader(L);
+	argReader.ReadString(resourceName);
+	argReader.ReadString(functionName);
+
+	//get resource by name
+	CResourceManager* p = s_Core->GetResourceByName(resourceName.c_str());
+	if (p == NULL)
+	{
+		//if null then inform the user that there is no resource
+		CUtility::printf("No resource running under '%s' name!", resourceName.c_str());
+		return 0;
+	}
+
+	//get resource LuaVM
+	lua_State *lua_VM = p->GetLuaVM()->GetVirtualMachine();
+	
+	//save how many values have the stack
+	int top = lua_gettop(lua_VM);
+
+	//call the function
+	lua_getglobal(lua_VM, functionName.c_str());
+
+	//loop through the arguments and pass the arguments to the function
+	for (int i = 3; i <= argn; i++)
+	{
+		//loop through the arguments and push to the stack
+		int iType = lua_type(L, i);
+		switch (iType)
+		{
+		case LUA_TNUMBER:
+		{
+							lua_Number tempNumber;
+							argReader.ReadLuaNumber(tempNumber);
+							lua_pushnumber(lua_VM, tempNumber);
+							break;
+		}
+		case LUA_TBOOLEAN:
+		{
+							 bool tempBool;
+							 argReader.ReadBool(tempBool);
+							 lua_pushboolean(lua_VM, tempBool);
+							 break;
+		}
+		case LUA_TSTRING:
+		{
+							std::string tempString;
+							argReader.ReadString(tempString);
+							lua_pushstring(lua_VM, tempString.c_str());
+							break;
+		}
+		}
+	}
+
+	//pass how many arguments we passed and calculate how many return value will we have and call the function
+	int R = lua_pcall(lua_VM, (argn - 2), LUA_MULTRET, 0);
+
+	//count return
+	int nresults = (lua_gettop(lua_VM) - top);
+
+	if (nresults > 0)
+	{
+		int stack_end = 3 + nresults;
+		ArgReader argR(lua_VM, 3); //return values start at index 3
+
+		for (int stack_index = 3; stack_index < stack_end; stack_index++)
+		{
+			if (argR.IsBool())
+			{
+				bool tempBool;
+				argR.ReadBool(tempBool);
+				lua_pushboolean(L, tempBool);
+			}
+			else if (argR.IsNumber())
+			{
+				lua_Number tempNumber;
+				argR.ReadLuaNumber(tempNumber);
+				lua_pushnumber(L, tempNumber);
+			}
+			else if (argR.IsString())
+			{
+				std::string tempString;
+				argR.ReadString(tempString);
+				lua_pushstring(L, tempString.c_str());
+			}
+			else if (argR.IsNil())
+			{
+				lua_pushnil(L);
+			}
+			else
+			{
+				argR.argIndex++;
+			}
+		}
+
+		//stackdump(lua_VM);
+		//stackdump(L);
+	}
+
+	return nresults;
 }
 
 LUA_FUNCTION print(lua_State *L)
@@ -32,7 +202,7 @@ LUA_FUNCTION addEventHandler(lua_State *L)
 	argReader.ReadFunction(reference);
 	argReader.ReadFunctionComplete();
 
-	CContainer::LuaReference::Add(L, luaFunction, reference);
+	s_Core->RegisterReference(L, luaFunction, reference);
 	return 0;
 }
 
@@ -47,7 +217,7 @@ LUA_FUNCTION addCommandHandler(lua_State *L)
 	argReader.ReadFunctionComplete();
 
 	//CUtility::printf("OPCT: %s", luaFunction.c_str());
-	CContainer::LuaReference::Add(L, luaFunction, reference);
+	s_Core->RegisterReference(L, luaFunction, reference);
 	return 0;
 }
 
@@ -220,7 +390,7 @@ LUA_FUNCTION gameTextForPlayer(lua_State *L)
 
 LUA_FUNCTION getTickCount(lua_State *L)
 {
-	lua_pushnumber(L, GetTickCount());
+	lua_pushnumber(L, GetTickCountEx());
 
 	return 1;
 }
@@ -1041,7 +1211,7 @@ LUA_FUNCTION createMenu(lua_State *L)
 	argReader.ReadFloat(col1width);
 	argReader.ReadFloat(col2width);
 
-	int menuid = CreateMenu(title.c_str(), columns, x, y, col1width, col2width);
+	int menuid = CreateMenuEx(title.c_str(), columns, x, y, col1width, col2width);
 	lua_pushnumber(L, menuid);
 
 	return 1;
@@ -1054,7 +1224,7 @@ LUA_FUNCTION destroyMenu(lua_State *L)
 	ArgReader argReader(L);
 	argReader.ReadNumber(menuid);
 
-	bool success = DestroyMenu(menuid);
+	bool success = DestroyMenuEx(menuid);
 	lua_pushboolean(L, success);
 
 	return 1;
@@ -2427,7 +2597,7 @@ LUA_FUNCTION selectObject(lua_State *L)
 	ArgReader argReader(L);
 	argReader.ReadNumber(playerid);
 
-	SelectObject(playerid);
+	SelectObjectEx(playerid);
 
 	return 0;
 }

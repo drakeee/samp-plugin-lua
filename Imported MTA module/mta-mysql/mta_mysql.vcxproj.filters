@@ -1,0 +1,262 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\mysql">
+      <UniqueIdentifier>{fecbfd48-d646-4574-bcdb-b42104aeeb3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files">
+      <UniqueIdentifier>{f1f57abd-a544-4323-b1f9-6a538acd0403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\luaimports">
+      <UniqueIdentifier>{31e6d555-040d-405e-80f4-12dc62a123d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\src">
+      <UniqueIdentifier>{cd91e335-5cd4-49df-962f-0aa1981b2ee1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\result.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lapi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lauxlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lbaselib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lbitlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lcode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lcorolib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lctype.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\ldblib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\ldebug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\ldo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\ldump.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lfunc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lgc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\linit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\liolib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\llex.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lmathlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lmem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\loadlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lobject.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lopcodes.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\loslib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lparser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lstate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lstring.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lstrlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\ltable.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\ltablib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\ltm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lundump.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lutf8lib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lvm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="luaimports\lzio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ILuaModuleManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\module.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\result.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\config-win.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\decimal.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\errmsg.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\keycache.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\m_ctype.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\m_string.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_alloc.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_attribute.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_dbug.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_dir.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_getopt.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_global.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_list.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_net.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_no_pthread.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_pthread.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_sys.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\my_xml.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\mysql.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\mysql_com.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\mysql_embed.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\mysql_time.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\mysql_version.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\mysqld_ername.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\mysqld_error.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\raid.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\sql_common.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\sql_state.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\sslopt-case.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\sslopt-longopts.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\sslopt-vars.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mysql\typelib.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="build.sh">
+      <Filter>Other Files</Filter>
+    </None>
+    <None Include="configure.ac">
+      <Filter>Other Files</Filter>
+    </None>
+    <None Include="Makefile.am">
+      <Filter>Other Files</Filter>
+    </None>
+    <None Include="src\Makefile.am">
+      <Filter>Other Files\src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

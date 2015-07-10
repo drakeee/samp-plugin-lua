@@ -1,5 +1,5 @@
 #include "CResourceManager.h"
-#include "CGlobalContainer.h"
+#include "CCore.h"
 
 using namespace tinyxml2;
 
@@ -15,12 +15,12 @@ CResourceManager::CResourceManager(const char* rN)
 CResourceManager::~CResourceManager()
 {
 	//CUtility::printf("Destructor");
-	CContainer::Resource::Delete(r_resourceName.c_str());
+	s_Core->DeleteResource(r_resourceName.c_str());
 }
 
 bool CResourceManager::IsValidFile(std::string szFileScript)
 {
-	std::string file("lua_scripts/" + r_resourceName + "/" + szFileScript);
+	std::string file(LUA_RESOURCES_FOLDER + r_resourceName + "/" + szFileScript);
 	std::ifstream fileScript(file);
 	if (fileScript.good())
 	{
@@ -34,10 +34,10 @@ bool CResourceManager::IsValidFile(std::string szFileScript)
 	}
 }
 
-void CResourceManager::LoadResource()
+int CResourceManager::LoadResource()
 {
-	std::string xmlFile("lua_scripts/" + r_resourceName + "/meta.xml");
-	XMLDocument doc;
+	std::string xmlFile(LUA_RESOURCES_FOLDER + r_resourceName + "/meta.xml");
+	tinyxml2::XMLDocument doc;
 	XMLError eResult = doc.LoadFile(xmlFile.c_str());
 
 	if (eResult == XML_SUCCESS)
@@ -47,10 +47,12 @@ void CResourceManager::LoadResource()
 		{
 			CUtility::printf("Unable to handle the XML file!");
 			delete this;
-			return;
+			return 1;
 		}
 
 		XMLElement * pElement = pRoot->FirstChildElement("script");
+		CLuaManager *luaScript = new CLuaManager(r_resourceName);
+
 		while (pElement != nullptr)
 		{
 			std::string srcFile(pElement->Attribute("src"));
@@ -58,37 +60,38 @@ void CResourceManager::LoadResource()
 
 			if (IsValid)
 			{
-				CLuaManager *luaScript = new CLuaManager(r_resourceName, srcFile);
+				
 				//CUtility::printf("A: %s", luaScript->GetResourceName().c_str());
-				r_validScripts.push_back(luaScript);
+				luaScript->AddFile(srcFile);
+				//r_validScripts.push_back(luaScript);
 			}
 			else
 			{
 				CUtility::printf("Unable to load the file: %s (file not exists)", srcFile.c_str());
-				return;
+				delete luaScript;
+				return 2;
 			}
 
 			pElement = pElement->NextSiblingElement("script");
 		}
 
+		r_validScript = luaScript;
 		r_isScriptsValid = true;
 	}
 	else
 	{
 		CUtility::printf("Unable to load '%s' resource! (unable to open XML file)", r_resourceName.c_str());
 		delete this;
+		return 3;
 	}
+
+	return 4;
 }
 
 void CResourceManager::StartResource(void)
 {
-	for (std::vector<CLuaManager *>::iterator it = r_validScripts.begin(); it != r_validScripts.end(); ++it)
-	{
-		(*it)->InitVM();
-		(*it)->StartLua();
-
-		CContainer::LuaResourceManager::Add((*it)->GetVirtualMachine(), this);
-	}
+	r_validScript->StartLua();
+	s_Core->RegisterLuaVM(r_validScript->GetVirtualMachine(), this);
 
 	//r_isActive = true;
 	r_isRunning = true;
@@ -96,19 +99,25 @@ void CResourceManager::StartResource(void)
 
 void CResourceManager::StopResource(void)
 {
-	std::map<lua_State *, CResourceManager *> tempContainer = CContainer::LuaResourceManager::GetContainer();
-	for (std::map<lua_State *, CResourceManager *>::iterator it = tempContainer.begin(); it != tempContainer.end(); ++it)
+	std::map<lua_State *, CResourceManager *> *tempContainer = s_Core->GetLuaResourceContainer();
+	for (std::map<lua_State *, CResourceManager *>::iterator it = (*tempContainer).begin(); it != (*tempContainer).end(); ++it)
 	{
 		if (it->second == this)
 		{
-			CLuaManager *luaManager = CContainer::LuaManager::Get(it->first);
+			CLuaManager *luaManager = s_Core->GetLuaManager(it->first);
 			//CUtility::printf("%d", luaManager->GetVirtualMachine());
 
-			delete luaManager;
-			CContainer::LuaResourceManager::Delete(it->first);
-			CContainer::LuaReference::Delete(it->first);
-
+			auto *tempContainer = s_Core->GetModuleContainer();
+			for (auto it = (*tempContainer).begin(); it != (*tempContainer).end(); ++it)
+			{
+				(*it)->_ResourceStopping(luaManager->GetVirtualMachine());
+			}
 			lua_close(luaManager->GetVirtualMachine());
+
+			delete luaManager;
+			s_Core->DeleteLuaVM(it->first);
+			s_Core->DeleteReference(it->first);
+			break;
 		}
 	}
 

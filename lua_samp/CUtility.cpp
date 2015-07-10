@@ -9,5 +9,5 @@ void CUtility::printf(const char* szFormat, ...)
 	vsnprintf(szBuffer, sizeof(szBuffer), szFormat, vaArgs);
 	va_end(vaArgs);
 
-	sampgdk::logprintf(" [Lua] %s", szBuffer);
+	sampgdk::logprintf("[Lua] %s", szBuffer);
 }

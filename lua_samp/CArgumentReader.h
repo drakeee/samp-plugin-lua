@@ -12,21 +12,27 @@ extern "C"
 class ArgReader
 {
 public:
-	ArgReader(lua_State *L);
+	ArgReader(lua_State *L, int stackStart = 1);
 	~ArgReader();
 
-	void ReadNumber(int& intVariable, int defaultValue = NULL);
-	void ReadFloat(float& floatVariable, float defaultValue = NULL);
-	void ReadBool(bool& boolVariable, bool defaultValue = false);
-	void ReadArguments(CLuaArguments &luaArgumentsVariable);
-	void ReadFunction(int& intVariable);
-	void ReadFunctionComplete();
-	void ReadString(std::string& stringVariable, const char* defaultValue = NULL);
+	inline bool	IsBool(void) { return (lua_type(lua_VM, argIndex) == LUA_TBOOLEAN); }
+	inline bool	IsNumber(void) { return (lua_type(lua_VM, argIndex) == LUA_TNUMBER); }
+	inline bool	IsString(void) { return (lua_type(lua_VM, argIndex) == LUA_TSTRING); }
+	inline bool IsNil(void) { return (lua_type(lua_VM, argIndex) == LUA_TNIL); }
 
-	lua_State *lua_VM;
-	int argIndex;
-	int *pendingFunctionRefOut;
-	int pendingFunctionRef;
+	void		ReadLuaNumber(lua_Number& numberVariable, int defaultValue = NULL);
+	void		ReadNumber(int& intVariable, int defaultValue = NULL);
+	void		ReadFloat(float& floatVariable, float defaultValue = NULL);
+	void		ReadBool(bool& boolVariable, bool defaultValue = false);
+	void		ReadArguments(CLuaArguments &luaArgumentsVariable);
+	void		ReadFunction(int& intVariable);
+	void		ReadFunctionComplete();
+	void		ReadString(std::string& stringVariable, const char* defaultValue = NULL);
+
+	lua_State*	lua_VM;
+	int			argIndex;
+	int*		pendingFunctionRefOut;
+	int			pendingFunctionRef;
 };
 
 #endif
