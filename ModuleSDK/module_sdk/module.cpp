@@ -1,4 +1,4 @@
-#include <module.h>
+#include "module.h"
 
 ILuaModuleManager *p_moduleManager = NULL;
 
