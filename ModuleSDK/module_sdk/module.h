@@ -5,8 +5,8 @@
 #define MODULE_AUTHOR	"Test"
 #define MODULE_VERSION	1.0
 
-#include <Include/Module/ILuaModuleManager.h>
-#include <CFunctions.h>
+#include "Include/Module/ILuaModuleManager.h"
+#include "CFunctions.h"
 
 #ifdef WIN32
 #define LUAMODULE extern "C" __declspec(dllexport)

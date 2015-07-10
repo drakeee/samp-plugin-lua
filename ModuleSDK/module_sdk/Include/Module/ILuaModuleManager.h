@@ -5,9 +5,9 @@
 
 extern "C"
 {
-#include <Include/Lua_351/lua.h>
-#include <Include/Lua_351/lualib.h>
-#include <Include/Lua_351/lauxlib.h>
+#include "Include/Lua_351/lua.h"
+#include "Include/Lua_351/lualib.h"
+#include "Include/Lua_351/lauxlib.h"
 }
 #include <string>
 
