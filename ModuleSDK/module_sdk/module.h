@@ -5,6 +5,7 @@
 #define MODULE_AUTHOR	"Test"
 #define MODULE_VERSION	1.0
 
+#include <string.h>
 #include "Include/Module/ILuaModuleManager.h"
 #include "CFunctions.h"
 
