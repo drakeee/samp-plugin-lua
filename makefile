@@ -9,13 +9,13 @@ LUASAMP = -D LUASAMP $(COMPILE_FLAGS)
 all: LUASAMP
 
 clean:
-        -rm -f *~ *.o *.so
+	-rm -f *~ *.o *.so
 
 LUASAMP: clean
-        gcc $(LUASAMP) ./lua_samp/Include/Lua_351/*.c
-        gcc $(LUASAMP) ./lua_samp/Include/sampgdk/*.c
-        g++ $(LUASAMP) ./lua_samp/Include/SDK/*.cpp
-        g++ $(LUASAMP) ./lua_samp/Include/TinyXML/tinyxml2.cpp
-        g++ $(LUASAMP) ./lua_samp/*.cpp
-        g++ -m32 -O2 -fshort-wchar -shared -o $(OUTFILE) *.o
-        rm *.o
+	gcc $(LUASAMP) ./lua_samp/Include/Lua_351/*.c
+	gcc $(LUASAMP) ./lua_samp/Include/sampgdk/*.c
+	g++ $(LUASAMP) ./lua_samp/Include/SDK/*.cpp
+	g++ $(LUASAMP) ./lua_samp/Include/TinyXML/tinyxml2.cpp
+	g++ $(LUASAMP) ./lua_samp/*.cpp
+	g++ -m32 -O2 -fshort-wchar -shared -o $(OUTFILE) *.o
+	rm *.o
