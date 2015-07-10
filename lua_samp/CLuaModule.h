@@ -5,7 +5,13 @@
 #include <string>
 #include <vector>
 #include "ILuaModuleManager.h"
-#include <Windows.h>
+
+#ifdef WIN32
+	#include <Windows.h>
+#else
+	#include <dlfcn.h>
+	typedef void* HMODULE;
+#endif
 
 extern "C"
 {
