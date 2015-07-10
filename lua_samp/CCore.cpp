@@ -1,6 +1,10 @@
 #include "CCore.h"
 #include "CUtility.h"
 
+#ifndef WIN32
+#include <algorithm>
+#endif
+
 CCore* s_Core;
 CCore::CCore()
 {

@@ -45,7 +45,11 @@ private:
 	std::string		m_modulePath;
 	std::string		m_moduleName;
 	char			m_teszt[MAX_INFO_LENGTH];
+#ifdef WIN32
 	wchar_t			m_fileName[64];
+#else
+	std::string		m_fileName;
+#endif
 	bool			m_isInitialised;
 	HMODULE			m_Module;
 	INITFUNC		m_initFunc;

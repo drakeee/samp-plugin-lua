@@ -2,11 +2,19 @@
 #include "CCore.h"
 #include "CUtility.h"
 
+#ifndef WIN32
+#include <algorithm>
+#endif
+
 CLuaModule::CLuaModule(std::string moduleName)
 {
 	m_modulePath = std::string(LUA_MODULES_FOLDER + moduleName);
 	m_moduleName = moduleName;
+#ifdef WIN32
 	MultiByteToWideChar(0, 0, m_modulePath.c_str(), -1, m_fileName, 64);
+#else
+	m_fileName = m_modulePath;
+#endif
 	m_isInitialised = false;
 }
 
@@ -26,7 +34,7 @@ int CLuaModule::_LoadModule()
 			return 1;
 		}
 	#else
-		m_Module = dlopen(m_szFileName, RTLD_NOW);
+		m_Module = dlopen(m_fileName.c_str(), RTLD_NOW);
 		if (m_Module == NULL)
 		{
 			CUtility::printf("MODULE: Unable to load '%s' module!", m_moduleName.c_str());
