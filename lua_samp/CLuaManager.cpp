@@ -89,8 +89,14 @@ void CLuaManager::RegisterPreScript(lua_State *L)
 		"local callMT = {}\n" \
 		"function callMT : __index(k)\n" \
 		"	k = tostring(k)\n" \
-		"	self[k] = function(resTable, ...)\n" \
-		"		return call(self.res, k, ...)\n" \
+		"	self[k] = function(a, ...)\n" \
+		"		if a == nil and #{...} == 0 then\n" \
+		"			return call(self.res, k)\n" \
+		"		elseif a == self then\n" \
+		"			return call(self.res, k, ...)\n" \
+		"		else\n" \
+		"			return call(self.res, k, a, ...)\n" \
+		"		end\n" \
 		"	end\n" \
 		"	return self[k]\n" \
 		"end\n" \

@@ -132,35 +132,43 @@ LUA_FUNCTION call(lua_State *L)
 		}
 	}
 
+	//sampgdk::logprintf("PCall: %s - %d", functionName.c_str(), argn - 2);
+
 	//pass how many arguments we passed and calculate how many return value will we have and call the function
 	int R = lua_pcall(lua_VM, (argn - 2), LUA_MULTRET, 0);
 
 	//count return
 	int nresults = (lua_gettop(lua_VM) - top);
 
+	//stackdump(lua_VM);
+	//stackdump(L);
+
 	if (nresults > 0)
 	{
-		int stack_end = 3 + nresults;
-		ArgReader argR(lua_VM, 3); //return values start at index 3
+		int stack_end = 1 + nresults;
+		ArgReader argR(lua_VM); //return values start at index 3
 
-		for (int stack_index = 3; stack_index < stack_end; stack_index++)
+		for (int stack_index = 1; stack_index < stack_end; stack_index++)
 		{
 			if (argR.IsBool())
 			{
 				bool tempBool;
 				argR.ReadBool(tempBool);
+				//sampgdk::logprintf("B: %d", tempBool);
 				lua_pushboolean(L, tempBool);
 			}
 			else if (argR.IsNumber())
 			{
 				lua_Number tempNumber;
 				argR.ReadLuaNumber(tempNumber);
+				//sampgdk::logprintf("N: %d", tempNumber);
 				lua_pushnumber(L, tempNumber);
 			}
 			else if (argR.IsString())
 			{
 				std::string tempString;
 				argR.ReadString(tempString);
+				//sampgdk::logprintf("S: %s", tempString.c_str());
 				lua_pushstring(L, tempString.c_str());
 			}
 			else if (argR.IsNil())
@@ -172,6 +180,9 @@ LUA_FUNCTION call(lua_State *L)
 				argR.argIndex++;
 			}
 		}
+
+		//clear the stack, because it can stack to hundreds and thousands of elements
+		lua_settop(lua_VM, 0);
 
 		//stackdump(lua_VM);
 		//stackdump(L);
