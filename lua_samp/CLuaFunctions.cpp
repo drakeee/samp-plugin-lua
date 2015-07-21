@@ -141,7 +141,7 @@ LUA_FUNCTION call(lua_State *L)
 	int nresults = (lua_gettop(lua_VM) - top);
 
 	//stackdump(lua_VM);
-	//stackdump(L);
+	//errstackdump(L);
 
 	if (nresults > 0)
 	{

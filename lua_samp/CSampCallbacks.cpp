@@ -104,6 +104,8 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX *amx, const char *name, cell *pa
 					break;
 				}
 			}
+
+			numArg++;
 		}
 
 		if (lua_pcall(L, argc, LUA_MULTRET, 0) != 0)
