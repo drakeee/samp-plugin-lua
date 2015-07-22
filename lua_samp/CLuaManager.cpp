@@ -502,6 +502,7 @@ void CLuaManager::RegisterModuleFunctions(lua_State *L)
 void CLuaManager::RegisterFunctions(lua_State *L)
 {
 	lua_register(L, "call", CLuaFunctions::call);
+	lua_register(L, "tocolor", CLuaFunctions::tocolor);
 	lua_register(L, "isResourceRunning", CLuaFunctions::isResourceRunning);
 
 	lua_register(L, "print", CLuaFunctions::print);

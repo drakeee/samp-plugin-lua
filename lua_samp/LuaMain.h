@@ -9,7 +9,7 @@
 
 #define PLUGIN_MAJOR			"0"
 #define PLUGIN_MINOR			"2"
-#define PLUGIN_REVISION			"4"
-#define PLUGIN_VERSION			"v0.2.4"
+#define PLUGIN_REVISION			"5"
+#define PLUGIN_VERSION			"v0.2.5"
 
 #endif

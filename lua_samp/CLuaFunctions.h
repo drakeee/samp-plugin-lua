@@ -19,6 +19,7 @@ namespace CLuaFunctions
 
 	//Functions - Call function from another LuaVM
 	int isResourceRunning(lua_State *L);
+	int tocolor(lua_State *L);
 	int call(lua_State *L);
 
 	//Functions - Util

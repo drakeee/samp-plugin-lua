@@ -70,6 +70,40 @@ LUA_FUNCTION isResourceRunning(lua_State *L)
 	return 1;
 }
 
+LUA_FUNCTION tocolor(lua_State *L)
+{
+	int32_t color32;
+	lua_Number color64;
+
+	ArgReader argReader(L);
+	int argn = lua_gettop(L);
+	if (argn > 1)
+	{
+		int r, g, b, a;
+		argReader.ReadNumber(r);
+		argReader.ReadNumber(g);
+		argReader.ReadNumber(b);
+
+		if (argn == 4)
+		{
+			argReader.ReadNumber(a);
+			color32 = ((r << 24) + (g << 16) + (b << 8) + (a));
+		}
+		else
+			color32 = ((r << 16) + (g << 8) + (b));
+	}
+	else
+	{
+		//because Lua is in 64 bit mode, we need to convert it back to 32 bit
+		argReader.ReadLuaNumber(color64);
+		color32 = (int)((int64_t)color64 - (((int64_t)color64 >> 32) << 32));
+	}
+
+	lua_pushnumber(L, (int)color32);
+
+	return 1;
+}
+
 LUA_FUNCTION call(lua_State *L)
 {
 	int argn = lua_gettop(L);
